@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use crate::utils::model::model::{HttpResponse, RatingChangeData};
 
-use super::model::model::ContestData;
+use super::model::model::{ContestData, ContestPhase};
 use colored::Colorize;
 
 pub struct CFClient {
@@ -30,10 +30,10 @@ impl CFClient {
                 .result
                 .iter()
                 .rev()
-                .filter(|&data| data.phase == "BEFORE")
+                .filter(|&data| data.phase == ContestPhase::Before)
                 .enumerate()
                 .for_each(|(index, contest)| {
-                    println!("{}) {} - {}", index + 1, contest.name, contest.contest_type)
+                    println!("{}) {} - {:?}", index + 1, contest.name, contest.contest_type)
                 });
         }
     }

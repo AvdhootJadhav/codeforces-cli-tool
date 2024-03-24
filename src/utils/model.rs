@@ -12,8 +12,8 @@ pub mod model {
         pub id: i64,
         pub name: String,
         #[serde(alias = "type")]
-        pub contest_type: String,
-        pub phase: String,
+        pub contest_type: ContestType,
+        pub phase: ContestPhase,
         pub frozen: bool,
         #[serde(alias = "durationSeconds")]
         pub duration_seconds: i64,
@@ -37,6 +37,27 @@ pub mod model {
         pub old_rating: i64,
         #[serde(alias = "newRating")]
         pub new_rating: i64
+    }
+
+    #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+    pub enum ContestPhase {
+        #[serde(alias = "BEFORE")]
+        Before,
+        #[serde(alias = "CODING")]
+        Coding,
+        #[serde(alias = "PENDING_SYSTEM_TEST")]
+        PendingSystemTest,
+        #[serde(alias = "SYSTEM_TEST")]
+        SystemTest,
+        #[serde(alias = "FINISHED")]
+        Finished
+    }
+
+    #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+    pub enum ContestType {
+        CF,
+        IOI,
+        ICPC
     }
 
 }
