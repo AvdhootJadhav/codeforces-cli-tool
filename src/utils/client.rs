@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use crate::utils::model::model::{HttpResponse, RatingChangeData};
 
-use super::model::model::{ContestData, ContestPhase};
+use super::model::model::{ContestData, ContestPhase, UserInfo};
 use colored::Colorize;
 
 pub struct CFClient {
@@ -68,5 +68,18 @@ impl CFClient {
                 );
             })
         }
+    }
+
+    pub async fn fetch_user_info(&self, user: &str) {
+        println!("{}", &user);
+        let url = self.base_path.to_string() + "user.info?handles=" + user;
+        let response = reqwest::get(url)
+            .await
+            .unwrap()
+            .json::<HttpResponse<UserInfo>>()
+            .await
+            .unwrap();
+
+        println!("{:?}", response);
     }
 }

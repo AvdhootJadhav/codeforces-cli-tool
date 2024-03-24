@@ -6,7 +6,7 @@ use codeforces_cli::utils::client::CFClient;
 async fn main() {
     let command = env::args().nth(1);
     let handle = env::args().nth(2);
-    let commands = vec!["contestList", "ratingChange"];
+    let commands = vec!["contestList", "ratingChange", "userInfo"];
 
     if command.is_none() {
         println!("{}", "List of supported commands:");
@@ -23,20 +23,26 @@ async fn main() {
         return;
     }
 
+    if first.eq("ratingChange") || first.eq("userInfo") {
+        if handle.is_none() {
+            println!("CF Handle is required");
+            return;
+        }
+    }
+
     let client = CFClient::new();
+    let user = handle.unwrap();
 
     match first.as_str() {
         "contestList" => {
             client.fetch_contests().await;
         }
         "ratingChange" => {
-            if handle.is_none() {
-                println!("CF Handle is required");
-                return;
-            }
-
-            client.fetch_rating_change(handle.unwrap().as_str()).await;
-        }
+            client.fetch_rating_change(&user.as_str()).await;
+        },
+        "userInfo" => {
+            client.fetch_user_info(&user.as_str().replace(",", ";")).await;
+        },
         _ => println!("Something unexpected occurred"),
     }
 }

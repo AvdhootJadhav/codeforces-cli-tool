@@ -39,6 +39,39 @@ pub mod model {
         pub new_rating: i64
     }
 
+    #[derive(Debug, Deserialize, Serialize, Clone)]
+    pub struct UserInfo {
+        pub handle: String,
+        pub email: Option<String>,
+        #[serde(alias = "vkId")]
+        pub vk_id: Option<String>,
+        #[serde(alias = "openId")]
+        pub open_id: Option<String>,
+        #[serde(alias = "firstName")]
+        pub first_name: Option<String>,
+        #[serde(alias = "lastName")]
+        pub last_name: Option<String>,
+        pub country: Option<String>,
+        pub city: Option<String>,
+        pub organization: Option<String>,
+        pub contribution: i64,
+        pub rank: String,
+        pub rating: i64,
+        #[serde(alias = "maxRank")]
+        pub max_rank: String,
+        #[serde(alias = "maxRating")]
+        pub max_rating: i64,
+        #[serde(alias = "lastOnlineTimeSeconds")]
+        pub last_online_time_seconds: i128,
+        #[serde(alias = "registrationTimeSeconds")]
+        pub registration_time_seconds: i128,
+        #[serde(alias = "friendOfCount")]
+        pub friend_of_count: i64,
+        pub avatar: String,
+        #[serde(alias = "titlePhoto")]
+        pub title_photo: String
+    }
+
     #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
     pub enum ContestPhase {
         #[serde(alias = "BEFORE")]
