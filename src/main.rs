@@ -8,25 +8,35 @@ async fn main() {
     let handle = env::args().nth(2);
     let commands = vec!["contestList", "ratingChange"];
 
-    if let Some(first) = command {
-        if commands.contains(&first.as_str()) {
-            let client = CFClient::new();
-
-            if let Some(user) = handle {
-                if first == "ratingChange" {
-                    client.fetch_rating_change(&user).await;
-                }
-            }
-            else {
-                client.fetch_contests().await;
-            }
-        } else {
-            println!("{}", "Command not supported");
-            println!("List of Supported Commands : {:?}", commands);
-        }
-    } else {
+    if command.is_none() {
         println!("{}", "List of supported commands:");
         println!("{}", "1) codeforces-cli contestList");
         println!("{}", "2) codeforces-cli ratingChange <CF-Handle>");
+        return;
+    }
+
+    let first = command.unwrap();
+
+    if !commands.contains(&first.as_str()) {
+        println!("{}", "Command not supported");
+        println!("List of Supported Commands : {:?}", commands);
+        return;
+    }
+
+    let client = CFClient::new();
+
+    match first.as_str() {
+        "contestList" => {
+            client.fetch_contests().await;
+        }
+        "ratingChange" => {
+            if handle.is_none() {
+                println!("CF Handle is required");
+                return;
+            }
+
+            client.fetch_rating_change(handle.unwrap().as_str()).await;
+        }
+        _ => println!("Something unexpected occurred"),
     }
 }

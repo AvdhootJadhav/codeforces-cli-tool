@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use crate::utils::model::model::{HttpResponse, RatingChangeData};
 
 use super::model::model::ContestData;
@@ -16,23 +18,23 @@ impl CFClient {
 
     pub async fn fetch_contests(&self) {
         let url = self.base_path.to_string() + "contest.list?gym=false";
-        let mut response = reqwest::get(url)
+        let response = reqwest::get(url)
             .await
             .unwrap()
             .json::<HttpResponse<ContestData>>()
             .await
             .unwrap();
 
-        if response.result.len() > 0 {
-            println!("List of Upcoming Contests:");
-            let mut index = 0;
-            response.result.reverse();
-            for contest in response.result {
-                if contest.phase == "BEFORE" {
-                    index += 1;
-                    println!("{}) {} - {}", index, contest.name, contest.contest_type);
-                }
-            }
+        if !response.result.is_empty() {
+            response
+                .result
+                .iter()
+                .rev()
+                .filter(|&data| data.phase == "BEFORE")
+                .enumerate()
+                .for_each(|(index, contest)| {
+                    println!("{}) {} - {}", index + 1, contest.name, contest.contest_type)
+                });
         }
     }
 
@@ -45,23 +47,26 @@ impl CFClient {
             .await
             .unwrap();
 
-        let mut data = response.result;
+        let data = response.result;
 
-        if data.len() > 0 {
+        if !data.is_empty() {
             println!("Rating Changes for {}", user);
-            let mut index = 0;
 
-            for change in data {
-                index += 1;
-                if change.old_rating < change.new_rating {
-                    println!("{}) {}[{}] {} ==> {}", index, change.contest_name, change.contest_id, change.old_rating, format!("{}",change.new_rating).color("green").bold());
-                } else if change.old_rating == change.new_rating {
-                    println!("{}) {}[{}] {} ==> {}", index, change.contest_name, change.contest_id, change.old_rating, format!("{}",change.new_rating).color("cyan").bold());
-                } else {
-                    println!("{}) {}[{}] {} ==> {}", index, change.contest_name, change.contest_id, change.old_rating, format!("{}",change.new_rating).color("red").bold());
-                }
-            }
+            data.iter().enumerate().for_each(|(index, change)| {
+                let color = match change.old_rating.cmp(&change.new_rating) {
+                    Ordering::Less => "green",
+                    Ordering::Greater => "red",
+                    Ordering::Equal => "cyan",
+                };
+                println!(
+                    "{}) {}[{}] {} ==> {}",
+                    index + 1,
+                    change.contest_name,
+                    change.contest_id,
+                    change.old_rating,
+                    format!("{}", change.new_rating).color(color).bold()
+                );
+            })
         }
     }
-
 }
