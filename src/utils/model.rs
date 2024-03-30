@@ -55,10 +55,10 @@ pub mod model {
         pub city: Option<String>,
         pub organization: Option<String>,
         pub contribution: i64,
-        pub rank: String,
+        pub rank: Ranks,
         pub rating: i64,
         #[serde(alias = "maxRank")]
-        pub max_rank: String,
+        pub max_rank: Ranks,
         #[serde(alias = "maxRating")]
         pub max_rating: i64,
         #[serde(alias = "lastOnlineTimeSeconds")]
@@ -91,6 +91,30 @@ pub mod model {
         CF,
         IOI,
         ICPC
+    }
+
+    #[derive(Debug, Serialize, Deserialize, Clone)]
+    pub enum Ranks {
+        #[serde(alias = "newbie")]
+        Newbie,
+        #[serde(alias = "pupil")]
+        Pupil,
+        #[serde(alias = "specialist")]
+        Specialist,
+        #[serde(alias = "expert")]
+        Expert,
+        #[serde(alias = "candidate master")]
+        CandidateMaster,
+        #[serde(alias = "master")]
+        Master,
+        #[serde(alias = "international master")]
+        InternationalMaster,
+        #[serde(alias = "grandmaster")]
+        GrandMaster,
+        #[serde(alias = "international grandmaster")]
+        InternationalGrandMaster,
+        #[serde(alias = "legendary grandmaster")]
+        LegendaryGrandMaster
     }
 
 }
